@@ -1,15 +1,13 @@
-# 🎙️ VibeCoded Transcription Pipeline
+# 🎙️ Transcription Pipeline
 
-> **Built in a hackathon. Powered by vibes. Surprisingly accurate.**
-
-A fully automated audio transcription tool that turns interviews, meetings, and conversations into clean, speaker-labeled transcripts — complete with timestamps. Built with OpenAI Whisper + pyannote.audio, this was originally vibecoded to handle qualitative interview data, and it just works.
+A fully automated audio transcription tool that turns interviews, meetings, and conversations into clean, speaker-labeled transcripts — complete with timestamps. Built with OpenAI Whisper + pyannote.audio.
 
 ---
 
 ## ✨ What It Does
 
 - 🎤 **Records audio** live from your microphone OR **loads any audio file** (MP3, M4A, WAV, etc.)
-- 🗣️ **Speaker diarization** — figures out WHO said WHAT and WHEN using pyannote.audio
+- 🗣️ **Speaker diarization** — identifies who said what and when using pyannote.audio
 - 📝 **Transcribes speech to text** with timestamps using OpenAI Whisper
 - 🔀 **Merges** transcription + diarization into a clean, readable transcript
 - 💾 **Saves output** as both `.txt` (human-readable) and `.json` (machine-readable)
@@ -31,7 +29,7 @@ cd Transcription
 pip install -r requirements.txt
 ```
 
-> ⚠️ You'll also need `ffmpeg` installed on your system for audio format conversion.
+> ⚠️ You'll also need **ffmpeg** installed on your system for audio format conversion.
 > - Mac: `brew install ffmpeg`
 > - Linux: `sudo apt install ffmpeg`
 > - Windows: [Download from ffmpeg.org](https://ffmpeg.org/download.html)
@@ -49,38 +47,36 @@ HF_TOKEN=your_huggingface_token_here
 ```
 
 > 🔑 Get a free token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
-> Then **accept the model terms** at [pyannote/speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1)
+>
+> Then, in your HuggingFace account settings, you must **enable read permissions** for the following two models by accepting their terms:
+> - [pyannote/speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1)
+> - [pyannote/segmentation-3.0](https://huggingface.co/pyannote/segmentation-3.0)
 
 ---
 
 ## 🎬 Usage
 
-### Transcribe an existing audio file
-
+**Transcribe an existing audio file**
 ```bash
 python main.py --input path/to/interview.mp3
 ```
 
-### Record directly from your microphone
-
+**Record directly from your microphone**
 ```bash
 python main.py --record --duration 120
 ```
 
-### Use a bigger Whisper model for better accuracy
-
+**Use a bigger Whisper model for better accuracy**
 ```bash
 python main.py --input audio.mp3 --model medium
 ```
 
-### Specify the number of speakers (improves diarization accuracy)
-
+**Specify the number of speakers (improves diarization accuracy)**
 ```bash
 python main.py --input interview.mp3 --speakers 2
 ```
 
-### Full options
-
+**Full options**
 ```bash
 python main.py --help
 ```
@@ -96,21 +92,16 @@ python main.py --help
 | `--max-speakers` | Maximum speakers | — |
 | `--output-dir` | Directory for output files | `transcripts/` |
 | `--name` | Base name for output files | `transcript` |
-| `--clear` | Clear existing transcripts before running | false |
+| `--clear` | Clear existing transcripts before running | `false` |
 
 ---
 
 ## 📄 Example Output
 
 ```
-[00:00:01.200 --> 00:00:05.400] Speaker 1:
-  So tell me a bit about your experience with the product.
-
-[00:00:06.100 --> 00:00:14.800] Speaker 2:
-  Yeah, honestly I found it really intuitive. The onboarding was smooth.
-
-[00:00:15.200 --> 00:00:18.500] Speaker 1:
-  That's great to hear. What would you change, if anything?
+[00:00:01.200 --> 00:00:05.400] Speaker 1: So tell me a bit about your experience with the product.
+[00:00:06.100 --> 00:00:14.800] Speaker 2: Yeah, honestly I found it really intuitive. The onboarding was smooth.
+[00:00:15.200 --> 00:00:18.500] Speaker 1: That's great to hear. What would you change, if anything?
 ```
 
 Transcripts are saved to `transcripts/transcript.txt` and `transcripts/transcript.json`.
@@ -121,21 +112,21 @@ Transcripts are saved to `transcripts/transcript.txt` and `transcripts/transcrip
 
 ```
 Transcription/
-├── main.py            # Entry point & CLI
-├── audio_handler.py   # Audio recording & file loading
-├── transcriber.py     # Whisper speech-to-text
-├── diarizer.py        # pyannote speaker diarization
-├── pipeline.py        # Merges transcription + diarization
-├── formatter.py       # Output formatting & file saving
-├── requirements.txt   # Python dependencies
-└── .env.example       # Environment variable template
+├── main.py              # Entry point & CLI
+├── audio_handler.py     # Audio recording & file loading
+├── transcriber.py       # Whisper speech-to-text
+├── diarizer.py          # pyannote speaker diarization
+├── pipeline.py          # Merges transcription + diarization
+├── formatter.py         # Output formatting & file saving
+├── requirements.txt     # Python dependencies
+└── .env.example         # Environment variable template
 ```
 
 ---
 
 ## 🧠 How It Works
 
-1. **Audio prep** — loads or records audio, converts to 16kHz mono WAV (what Whisper loves)
+1. **Audio prep** — loads or records audio, converts to 16kHz mono WAV
 2. **Diarization** — pyannote.audio identifies speaker turns with timestamps
 3. **Transcription** — Whisper transcribes speech into text segments with timestamps
 4. **Merging** — each text segment is matched to the speaker with the most overlapping time
@@ -147,20 +138,20 @@ Transcription/
 
 | Model | Speed | Accuracy | VRAM |
 |-------|-------|----------|------|
-| `tiny` | ⚡⚡⚡⚡ | ★★☆☆ | ~1 GB |
-| `base` | ⚡⚡⚡ | ★★★☆ | ~1 GB |
-| `small` | ⚡⚡ | ★★★☆ | ~2 GB |
-| `medium` | ⚡ | ★★★★ | ~5 GB |
-| `large` | 🐌 | ★★★★★ | ~10 GB |
+| tiny | ⚡⚡⚡⚡ | ★★☆☆ | ~1 GB |
+| base | ⚡⚡⚡ | ★★★☆ | ~1 GB |
+| small | ⚡⚡ | ★★★☆ | ~2 GB |
+| medium | ⚡ | ★★★★ | ~5 GB |
+| large | 🐌 | ★★★★★ | ~10 GB |
 
-For interview transcription, `base` or `small` works great. Use `medium` or `large` for noisy audio or heavy accents.
+For interview transcription, `base` or `small` works well. Use `medium` or `large` for noisy audio or heavy accents.
 
 ---
 
 ## 🛠️ Requirements
 
 - Python 3.9+
-- A HuggingFace account with access to [pyannote/speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1)
+- A HuggingFace account with read access granted to `pyannote/speaker-diarization-3.1` and `pyannote/segmentation-3.0`
 - `ffmpeg` on your system PATH
 - CUDA-capable GPU recommended (works on CPU but slower)
 
@@ -188,14 +179,14 @@ For interview transcription, `base` or `small` works great. Use `medium` or `lar
 
 ## 🤝 Contributing
 
-PRs welcome! This was vibecoded fast, so there's plenty of room to improve. Open an issue or submit a pull request.
+PRs welcome. Open an issue or submit a pull request.
 
 ---
 
 ## 📜 License
 
-MIT — use it, fork it, vibe with it.
+MIT — use it, fork it, build on it.
 
 ---
 
-*Vibecoded with ❤️ for qualitative research. If this saved you hours of manual transcription, give it a ⭐*
+*If this saved you hours of manual transcription, consider giving it a ⭐*
