@@ -1,18 +1,3 @@
-"""
-main.py
-Entry point for the transcription pipeline.
-
-Usage:
-    # Transcribe an existing audio file:
-    python main.py --input path/to/audio.mp3
-
-    # Record from microphone (e.g. 60 seconds) and transcribe:
-    python main.py --record --duration 60
-
-    # Use a larger Whisper model for better accuracy:
-    python main.py --input audio.mp3 --model medium
-"""
-
 import argparse
 import os
 from dotenv import load_dotenv
@@ -23,7 +8,6 @@ from transcriber import load_whisper_model, transcribe
 from pipeline import assign_speakers, merge_consecutive
 from formatter import format_transcript, save_transcript, clear_transcripts
 
-
 load_dotenv()
 
 
@@ -32,10 +16,8 @@ def parse_args():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--input", type=str, help="Path to an existing audio file")
     group.add_argument("--record", action="store_true", help="Record from microphone")
-
     parser.add_argument("--duration", type=int, default=60, help="Recording duration in seconds (default: 60)")
-    parser.add_argument("--model", type=str, default="base",
-                        choices=["tiny", "base", "small", "medium", "large"],
+    parser.add_argument("--model", type=str, default="base", choices=["tiny", "base", "small", "medium", "large"],
                         help="Whisper model size (default: base)")
     parser.add_argument("--output-dir", type=str, default="transcripts", help="Directory to save transcript files")
     parser.add_argument("--name", type=str, default="transcript", help="Base name for output files")
@@ -56,18 +38,15 @@ def main():
             "You need access to: https://huggingface.co/pyannote/speaker-diarization-3.1"
         )
 
-    # Optional: clear previous transcripts
     if args.clear:
         clear_transcripts(args.output_dir)
 
-    # Step 1: Get audio as a 16kHz mono WAV
     os.makedirs("audio", exist_ok=True)
     if args.record:
         audio_path = record_audio(f"audio/{args.name}.wav", args.duration)
     else:
         audio_path = load_audio(args.input, output_dir="audio")
 
-    # Step 2: Speaker diarization
     print("Running speaker diarization...")
     diar_pipeline = load_diarization_pipeline(hf_token)
     diar_segments = diarize(
@@ -80,16 +59,13 @@ def main():
     diar_segments = normalize_speaker_labels(diar_segments)
     print(f"Found {len(set(s['speaker'] for s in diar_segments))} speaker(s).")
 
-    # Step 3: Transcription with timestamps
     print("Running transcription...")
     whisper_model = load_whisper_model(args.model)
     transcription_segments = transcribe(whisper_model, audio_path)
 
-    # Step 4: Merge diarization + transcription
     merged = assign_speakers(transcription_segments, diar_segments)
     merged = merge_consecutive(merged)
 
-    # Step 5: Output
     print("\n--- TRANSCRIPT ---\n")
     print(format_transcript(merged))
     save_transcript(merged, output_dir=args.output_dir, base_name=args.name)
