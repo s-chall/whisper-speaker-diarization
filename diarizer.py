@@ -60,7 +60,6 @@ def diarize(
             kwargs["max_speakers"] = max_speakers
 
     raw = pipeline(audio_path, **kwargs)
-    # pyannote.audio 4.x returns DiarizeOutput; 3.x returned Annotation directly
     diarization: Annotation = getattr(raw, "speaker_diarization", raw)
 
     segments = [

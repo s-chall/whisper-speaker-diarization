@@ -36,7 +36,6 @@ def assign_speakers(
     for tseg in transcription_segments:
         t_start, t_end, text = tseg["start"], tseg["end"], tseg["text"]
 
-        # Primary strategy: pick the diarization segment with most overlap
         best_speaker: str | None = None
         best_overlap = 0.0
         for dseg in diarization_segments:
@@ -45,7 +44,6 @@ def assign_speakers(
                 best_overlap = ov
                 best_speaker = dseg["speaker"]
 
-        # Fallback: assign to the nearest segment when there is no overlap
         if best_speaker is None and diarization_segments:
             t_mid = (t_start + t_end) / 2
             nearest = min(

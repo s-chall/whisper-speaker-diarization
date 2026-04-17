@@ -12,9 +12,9 @@ import sounddevice as sd
 import torchaudio
 
 
-SAMPLE_RATE: int = 16_000  # Hz - required by both Whisper and pyannote
-CHANNELS: int = 1          # Mono
-CHUNK_SIZE: int = 1024     # Frames per sounddevice callback
+SAMPLE_RATE: int = 16_000
+CHANNELS: int = 1
+CHUNK_SIZE: int = 1024
 
 
 def record_audio(output_path: str, duration: int) -> str:
@@ -30,7 +30,7 @@ def record_audio(output_path: str, duration: int) -> str:
     print(f"Recording for {duration} second(s) - stops automatically.")
     audio_queue: queue.Queue = queue.Queue()
 
-    def _callback(indata, frames, time, status):  # noqa: ARG001
+    def _callback(indata, frames, time, status):
         audio_queue.put(indata.copy())
 
     parent_dir = os.path.dirname(output_path) or "."
@@ -38,7 +38,7 @@ def record_audio(output_path: str, duration: int) -> str:
 
     with wave.open(output_path, "wb") as wf:
         wf.setnchannels(CHANNELS)
-        wf.setsampwidth(2)  # 16-bit PCM: 2 bytes per sample
+        wf.setsampwidth(2)
         wf.setframerate(SAMPLE_RATE)
 
         with sd.InputStream(
@@ -79,11 +79,9 @@ def load_audio(input_path: str, output_dir: str = "audio") -> str:
 
     waveform, sample_rate = torchaudio.load(input_path)
 
-    # Downmix to mono if the source is multi-channel
     if waveform.shape[0] > 1:
         waveform = waveform.mean(dim=0, keepdim=True)
 
-    # Resample only when the source rate differs from the target
     if sample_rate != SAMPLE_RATE:
         resampler = torchaudio.transforms.Resample(
             orig_freq=sample_rate, new_freq=SAMPLE_RATE

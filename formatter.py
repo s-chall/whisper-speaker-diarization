@@ -108,7 +108,7 @@ def save_pdf(
     )
 
     story = []
-    last_marker_time = -timestamp_interval  # force marker before first line
+    last_marker_time = -timestamp_interval
 
     for entry in entries:
         if entry["start"] - last_marker_time >= timestamp_interval:
