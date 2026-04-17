@@ -1,8 +1,11 @@
 # Environment variables — never commit secrets
 .env
+.env.save
+.env.*.local
 
 # Python virtual environment
 venv/
+.venv/
 
 # Python cache
 __pycache__/
@@ -14,3 +17,11 @@ audio/
 
 # Generated transcripts
 transcripts/
+
+# macOS
+.DS_Store
+
+# Editor/IDE local settings
+.claude/
+.vscode/
+.idea/

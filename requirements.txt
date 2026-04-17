@@ -1,5 +1,5 @@
 openai-whisper
-pyannote.audio==3.3.2
+pyannote.audio>=4.0.4
 pyannote.core
 torch
 torchaudio
@@ -7,3 +7,4 @@ sounddevice
 scipy
 numpy
 python-dotenv
+reportlab

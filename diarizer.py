@@ -22,7 +22,7 @@ def load_diarization_pipeline(hf_token: str) -> Pipeline:
     """
     return Pipeline.from_pretrained(
         "pyannote/speaker-diarization-3.1",
-        use_auth_token=hf_token,
+        token=hf_token,
     )
 
 
@@ -59,7 +59,9 @@ def diarize(
         if max_speakers is not None:
             kwargs["max_speakers"] = max_speakers
 
-    diarization: Annotation = pipeline(audio_path, **kwargs)
+    raw = pipeline(audio_path, **kwargs)
+    # pyannote.audio 4.x returns DiarizeOutput; 3.x returned Annotation directly
+    diarization: Annotation = getattr(raw, "speaker_diarization", raw)
 
     segments = [
         {

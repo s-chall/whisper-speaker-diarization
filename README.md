@@ -10,7 +10,7 @@ A fully automated audio transcription tool that turns interviews, meetings, and 
 - 🗣️ **Speaker diarization** — identifies who said what and when using pyannote.audio
 - 📝 **Transcribes speech to text** with timestamps using OpenAI Whisper
 - 🔀 **Merges** transcription + diarization into a clean, readable transcript
-- 💾 **Saves output** as both `.txt` (human-readable) and `.json` (machine-readable)
+- 💾 **Saves output** as a formatted `.pdf` with periodic timestamp markers and bold speaker labels
 
 ---
 
@@ -104,7 +104,7 @@ python main.py --help
 [00:00:15.200 --> 00:00:18.500] Speaker 1: That's great to hear. What would you change, if anything?
 ```
 
-Transcripts are saved to `transcripts/transcript.txt` and `transcripts/transcript.json`.
+Transcripts are saved to `transcripts/transcript.pdf`.
 
 ---
 

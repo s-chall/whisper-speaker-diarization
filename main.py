@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 
 from audio_handler import load_audio, record_audio
 from diarizer import diarize, load_diarization_pipeline, normalize_speaker_labels
-from formatter import clear_transcripts, format_transcript, save_transcript
+from formatter import clear_transcripts, format_transcript, save_pdf
 from pipeline import assign_speakers, merge_consecutive
 from transcriber import load_whisper_model, transcribe
 
@@ -122,16 +122,20 @@ def main() -> None:
     diar_segments = normalize_speaker_labels(diar_segments)
     n_speakers = len({s["speaker"] for s in diar_segments})
     print(f"Found {n_speakers} speaker(s).")
+    if n_speakers == 0:
+        print("Warning: no speakers detected — transcript will be empty.")
 
     print("Running transcription...")
     whisper_model = load_whisper_model(args.model)
     transcription_segments = transcribe(whisper_model, audio_path)
+    if not transcription_segments:
+        print("Warning: no speech detected in audio — transcript will be empty.")
 
     merged = merge_consecutive(assign_speakers(transcription_segments, diar_segments))
 
     print("\n--- TRANSCRIPT ---\n")
     print(format_transcript(merged))
-    save_transcript(merged, output_dir=args.output_dir, base_name=args.name)
+    save_pdf(merged, output_dir=args.output_dir, base_name=args.name)
 
 
 if __name__ == "__main__":
