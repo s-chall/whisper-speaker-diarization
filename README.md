@@ -11,6 +11,7 @@ A fully automated audio transcription tool that turns interviews, meetings, and 
 - 📝 **Transcribes speech to text** with timestamps using OpenAI Whisper
 - 🔀 **Merges** transcription + diarization into a clean, readable transcript
 - 💾 **Saves output** as a formatted `.pdf` with periodic timestamp markers and bold speaker labels
+- 🖥️ **Ships with a React web UI** — upload files in the browser, watch live progress, preview the transcript, download the PDF
 
 ---
 
@@ -108,18 +109,64 @@ Transcripts are saved to `transcripts/transcript.pdf`.
 
 ---
 
+## 🖥️ Web UI (React + FastAPI)
+
+Prefer clicking over typing? The repo ships with a React front-end (`web/`) and a FastAPI server (`server.py`) that wraps the same pipeline. You get drag-and-drop upload, model/speaker options, a live progress bar, a color-coded transcript, and a one-click PDF download.
+
+### Prerequisites
+
+- Everything from the CLI Quickstart above (Python deps, `ffmpeg`, `HF_TOKEN` in `.env`)
+- **Node.js 18+** and **npm** — install from [nodejs.org](https://nodejs.org) or `brew install node`
+
+### 1. Start the API
+
+From the repo root, with your Python environment active:
+
+```bash
+pip3 install -r requirements.txt
+python server.py
+# API listening on http://127.0.0.1:8000
+```
+
+### 2. Start the UI
+
+In a second terminal:
+
+```bash
+cd web
+npm install
+npm run dev
+# Open http://127.0.0.1:5173
+```
+
+The Vite dev server proxies `/api/*` to the FastAPI server, so no extra config is needed.
+
+### How it works
+
+| Endpoint | What it does |
+|---|---|
+| `POST /api/jobs` | Multipart upload + options → returns `{ job_id }` |
+| `GET /api/jobs/{id}` | Returns status, progress, and (when done) the transcript JSON |
+| `GET /api/jobs/{id}/pdf` | Downloads the generated PDF |
+
+The server loads the Whisper + pyannote models on first use and keeps them cached between jobs, so subsequent runs are faster.
+
+---
+
 ## 🏗️ Project Structure
 
 ```
-Transcription/
-├── main.py              # Entry point & CLI
+whisper-speaker-diarization/
+├── main.py              # CLI entry point
+├── server.py            # FastAPI server for the web UI
 ├── audio_handler.py     # Audio recording & file loading
 ├── transcriber.py       # Whisper speech-to-text
 ├── diarizer.py          # pyannote speaker diarization
 ├── pipeline.py          # Merges transcription + diarization
 ├── formatter.py         # Output formatting & file saving
 ├── requirements.txt     # Python dependencies
-└── .env.example         # Environment variable template
+├── .env.example         # Environment variable template
+└── web/                 # React + Vite + TypeScript front-end
 ```
 
 ---

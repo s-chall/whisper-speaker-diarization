@@ -8,3 +8,6 @@ scipy
 numpy
 python-dotenv
 reportlab
+fastapi
+uvicorn[standard]
+python-multipart

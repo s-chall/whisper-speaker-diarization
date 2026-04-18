@@ -18,6 +18,12 @@ audio/
 # Generated transcripts
 transcripts/
 
+# Web UI uploads (created by the FastAPI server)
+uploads/
+
+# Node
+node_modules/
+
 # macOS
 .DS_Store
 
